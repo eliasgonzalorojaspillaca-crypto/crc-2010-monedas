@@ -1,8 +1,8 @@
 {
-  "name": "lcrc-netlify-centralizado",
+  "name": "crc-2010-monedas",
   "private": true,
   "version": "1.0.0",
   "dependencies": {
-    "@netlify/blobs": "latest"
+    "@netlify/blobs": "11.1.7"
   }
 }
