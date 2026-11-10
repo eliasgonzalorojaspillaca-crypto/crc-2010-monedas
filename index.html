@@ -9,11 +9,11 @@
 *{box-sizing:border-box} body{margin:0;background:var(--bg);color:#f5f2e8;font-family:Arial,Helvetica,sans-serif}
 header{padding:12px 14px 10px;text-align:center;background:linear-gradient(130deg,#1b1a12,#050505);border-bottom:3px solid var(--gold)}
 h1{font-size:clamp(17px,3vw,23px);letter-spacing:.7px;color:var(--gold);margin:0 0 3px} .sub{font-size:11px;letter-spacing:2px;color:#d0c8a8}
-.wrap{max-width:980px;margin:auto;padding:12px;display:grid;gap:10px}
+.wrap{max-width:1120px;margin:auto;padding:10px 12px 18px;display:grid;gap:8px}
 .top{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(230px,.75fr);gap:12px;align-items:center}
 .coin{width:100%;max-height:235px;object-fit:contain;border:1px solid var(--line);border-radius:8px;background:#111}
-.card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px}
-h2{font-size:14px;color:var(--gold);margin:0 0 10px;text-transform:uppercase;letter-spacing:.6px}
+.card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:10px}
+h2{font-size:14px;color:var(--gold);margin:0 0 7px;text-transform:uppercase;letter-spacing:.6px}
 .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}
 .metric{background:#202018;border:1px solid #373322;border-radius:6px;text-align:center;padding:8px 4px}
 .metric strong{display:block;color:var(--gold);font-size:clamp(20px,4vw,28px)} .metric span{font-size:10px;color:var(--muted);text-transform:uppercase}
@@ -27,9 +27,9 @@ label{font-size:10px;color:var(--muted);display:block;margin:0 0 4px}
 input{width:100%;background:#0d0d0b;color:white;border:1px solid #51482b;border-radius:5px;padding:10px;font-size:14px;min-width:0}
 button{background:var(--gold);color:#111;border:0;border-radius:5px;padding:10px 13px;font-weight:bold;cursor:pointer;font-size:12px}
 button.secondary{background:transparent;border:1px solid var(--gold);color:var(--gold)} button.danger{background:#47201b;color:#ffd7ce;padding:6px 8px}
-.tablewrap{overflow:auto} table{width:100%;border-collapse:collapse;font-size:12px} th,td{padding:8px 7px;border-bottom:1px solid #383528;text-align:left;white-space:nowrap} th{color:var(--gold);font-size:10px;text-transform:uppercase} td.qty{color:var(--gold);font-weight:bold;text-align:center} td.actions{text-align:right}
+.tablewrap{overflow:auto} table{width:100%;border-collapse:collapse;font-size:12px} th,td{padding:2px 6px;border-bottom:1px solid #383528;text-align:left;white-space:nowrap} th{color:var(--gold);font-size:10px;text-transform:uppercase} td.qty{color:var(--gold);font-weight:bold;text-align:center} td.actions{text-align:right}
 .empty{color:var(--muted);text-align:center;padding:16px}
-.note{font-size:10px;color:var(--muted);line-height:1.4;margin-top:8px} .status{font-size:11px;min-height:15px;color:var(--green);margin-top:7px}
+.note{font-size:10px;color:var(--muted);line-height:1.4;margin-top:8px} .status{display:none;font-size:11px;min-height:0;color:var(--green);margin-top:0}.status.error{display:block;color:#ff8c79;margin-top:6px}
 footer{text-align:center;color:#8e8976;font-size:10px;padding:2px 0 8px}
 @media(max-width:650px){.top{grid-template-columns:1fr} .coin{max-height:190px} .formrow{grid-template-columns:1fr 90px} .formrow button{grid-column:1/-1} .ring{width:100px;height:100px;flex-basis:100px}}
 </style>
@@ -59,8 +59,7 @@ footer{text-align:center;color:#8e8976;font-size:10px;padding:2px 0 8px}
    <div><label for="cantidad">Cantidad</label><input id="cantidad" type="number" min="0" max="50" value="1"></div>
    <button id="guardar">Guardar cantidad</button>
   </div>
-  <div class="status" id="status">Conectando con la base central...</div>
-  <div class="note">Puedes registrar un comando nuevo o modificar su cantidad. </div>
+  <div class="status" id="status" aria-live="polite"></div>
  </section>
  <section class="card">
   <h2>Control de monedas por comando</h2>
@@ -76,7 +75,7 @@ const INITIAL_COMMANDS = ['Cmdo 32', 'Cmdo 9', 'Cmdo 24', 'Cmdo 33', 'Cmdo 56', 
 let seedStarted = false;
 let registros=[];
 const $=id=>document.getElementById(id);
-function setStatus(t,err=false){$('status').textContent=t;$('status').style.color=err?'#ff8c79':'#65d18a'}
+function setStatus(t,err=false){const el=$('status');el.textContent=err?t:'';el.classList.toggle('error',!!err)}
 async function api(url='',options={}){
  const r=await fetch(API+url,{headers:{'Content-Type':'application/json'},...options});
  let d={};try{d=await r.json()}catch(e){}
@@ -122,7 +121,7 @@ async function load(){
      }
    }
    render();
-   setStatus('Datos sincronizados. '+INITIAL_COMMANDS.length+' comandos iniciales (sin Cmdo 14).');
+   setStatus('');
  }catch(e){setStatus('No se pudo conectar: '+e.message,true)}
 }
 function editar(c,q){$('cmd').value=c;$('cantidad').value=q;$('cmd').focus()}
