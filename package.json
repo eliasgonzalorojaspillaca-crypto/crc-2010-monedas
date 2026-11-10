@@ -1,0 +1,8 @@
+{
+  "name": "lcrc-netlify-centralizado",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@netlify/blobs": "latest"
+  }
+}
